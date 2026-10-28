@@ -7,12 +7,15 @@ Everything lives in one dedicated schema: `caregenie.caregenie` (new catalog `ca
 
 ## Phase 0: Setup (in progress)
 - [x] Databricks CLI v1.22.1 installed
-- [ ] Workspace host + auth (OAuth U2M preferred, PAT as fallback) into a `caregenie` CLI profile
+- [x] Workspace host + auth (PAT via `DATABRICKS_HOST` / `DATABRICKS_TOKEN` env vars; SQL via `scripts/sql.sh`, `scripts/run_sql_file.py`)
 - [x] Confirm catalog, SQL warehouse, and Lakebase/AI Search availability in the workspace
 - [x] Create catalog `caregenie`, schema `caregenie` with a Volume `raw` (for the Synthea CSVs)
-- [ ] Upload Synthea CSVs to the volume (`databricks fs cp`)
+- [x] Upload Synthea CSVs to the volume (`databricks fs cp`) -> `/Volumes/caregenie/caregenie/raw/synthea/`
 
-## Phase 1: Medallion + governance (success criterion 1)
+## Phase 1: Medallion + governance (success criterion 1) - DONE
+Implemented in `notebooks/01_bronze.sql`, `02_silver.sql`, `03_gold.sql` (Databricks SQL notebook source), checks in `sql/`.
+Finding: all 57 living diabetics (76 total, 19 deceased) have an HbA1c within the last 11 months, so 0 are overdue at the
+12-month threshold (16 are > 6 months, 8 are >= 9 months). The tools take a `months` parameter so Phase 3/5 demos use a lower threshold.
 - `01_bronze`: Auto Loader (`read_files` / `cloudFiles`) from the volume into bronze Delta tables, one per CSV
   (patients, conditions, medications, observations, encounters, procedures).
 - `02_silver`: typed, deduped, joined on patient/encounter; HbA1c = LOINC 4548-4 from observations.
