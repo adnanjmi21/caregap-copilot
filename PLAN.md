@@ -37,7 +37,11 @@ Finding: all 57 living diabetics (76 total, 19 deceased) have an HbA1c within th
   and a `certified=true` tag on gold tables only.
 - `sql/verify_care_gaps.sql`: a reproducible spot check against the raw tables.
 
-## Phase 2: AI Search (success criterion 2)
+## Phase 2: AI Search (success criterion 2) - in progress
+Endpoint `caregenie-search` (STANDARD, bills ~$0.28/hr while it exists; delete when idle). Indexes `guidelines_index` and
+`encounter_chunks_index` (TRIGGERED, `databricks-gte-large-en`). TRIGGERED result: a new guideline was invisible to queries
+right after the insert, and appeared about 2 minutes after `sync` was called (`scripts/ai_search.py experiment-triggered`).
+Still to do: CONTINUOUS comparison and the chunk-size comparison.
 - Delta Sync indexes on `gold_guidelines` and `gold_encounter_chunks` (Change Data Feed on).
 - Experiment: TRIGGERED index, insert a new guideline, query (stale), sync, query (fresh). Compare with CONTINUOUS.
 - Chunk-size comparison for encounter narratives.

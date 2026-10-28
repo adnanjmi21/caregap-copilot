@@ -31,12 +31,16 @@ def sync(which):
     api("post", f"/api/2.0/vector-search/indexes/{IDX[which]}/sync")
 
 
-def wait_synced(which, timeout=900):
+def row_count(which):
+    return api("get", f"/api/2.0/vector-search/indexes/{IDX[which]}")["status"].get("indexed_row_count")
+
+
+def wait_synced(which, before, timeout=900):
+    """A sync is asynchronous: `ready` stays True while it runs, so wait for the row count to change."""
     t0 = time.time()
     while time.time() - t0 < timeout:
-        s = api("get", f"/api/2.0/vector-search/indexes/{IDX[which]}")["status"]
-        if s.get("ready") and "ONLINE" in s.get("detailed_state", "ONLINE"):
-            return s
+        if row_count(which) != before:
+            return row_count(which)
         time.sleep(15)
     raise TimeoutError(which)
 
@@ -56,7 +60,11 @@ def experiment_triggered():
     print("Inserted G009 into the Delta source table (Change Data Feed captures it).")
     print("Query BEFORE sync (TRIGGERED index is stale):")
     for r in query("guidelines", q, 2): print("  ", r[0], r[1])
-    sync("guidelines"); time.sleep(5); wait_synced("guidelines")
+    before = row_count("guidelines")
+    sync("guidelines")
+    t0 = time.time()
+    if before is not None and wait_synced("guidelines", before):
+        print(f"Sync finished in {time.time() - t0:.0f}s")
     print("Query AFTER sync:")
     for r in query("guidelines", q, 2): print("  ", r[0], r[1])
 
@@ -66,6 +74,6 @@ if __name__ == "__main__":
     if cmd == "query":
         for r in query(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else 3): print(r)
     elif cmd == "sync":
-        sync(sys.argv[2]); print(wait_synced(sys.argv[2]))
+        before = row_count(sys.argv[2]); sync(sys.argv[2]); print(wait_synced(sys.argv[2], before))
     elif cmd == "experiment-triggered":
         experiment_triggered()
