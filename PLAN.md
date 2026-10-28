@@ -44,8 +44,8 @@ right after the insert, and appeared about 2 minutes after `sync` was called (`s
 Managed-embedding sync of the chunks ran at ~100 rows/min (hours). Fix: precompute embeddings in bulk with `ai_query`
 (`notebooks/03b_gold_embeddings.sql`, 25 s for 28,782 chunks) and index them as self-managed embeddings
 (`encounter_chunks_v2_index`, loaded in ~3 min). Trade-off: text queries are not accepted, the caller embeds the query.
-Still to do: CONTINUOUS comparison and the chunk-size comparison (cheap now); the slow
-`encounter_chunks_index` was deleted (user-approved).
+The slow `encounter_chunks_index` was deleted (user-approved).
+Still to do: CONTINUOUS comparison and the chunk-size comparison (cheap now).
 - Delta Sync indexes on `gold_guidelines` and `gold_encounter_chunks` (Change Data Feed on).
 - Experiment: TRIGGERED index, insert a new guideline, query (stale), sync, query (fresh). Compare with CONTINUOUS.
 - Chunk-size comparison for encounter narratives.
