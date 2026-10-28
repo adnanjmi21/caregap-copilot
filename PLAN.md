@@ -1,15 +1,15 @@
-# CareGap Copilot: Build Plan
+# CareGenie: Build Plan
 
 Learning project for the Databricks Certified Context Engineer Associate exam (Nov 1, 2026).
 All data is synthetic (Synthea). Guidelines are **fictional**. No real medical advice.
 
-Everything lives in one dedicated schema: `<catalog>.caregap` (name to be confirmed).
+Everything lives in one dedicated schema: `caregenie.caregenie` (new catalog `caregenie`, schema `caregenie`).
 
 ## Phase 0: Setup (in progress)
 - [x] Databricks CLI v1.22.1 installed
-- [ ] Workspace host + auth (OAuth U2M preferred, PAT as fallback) into a `caregap` CLI profile
+- [ ] Workspace host + auth (OAuth U2M preferred, PAT as fallback) into a `caregenie` CLI profile
 - [ ] Confirm catalog, SQL warehouse, and Lakebase/AI Search availability in the workspace
-- [ ] Create schema `caregap` with a Volume `raw` (for the Synthea CSVs)
+- [ ] Create catalog `caregenie`, schema `caregenie` with a Volume `raw` (for the Synthea CSVs)
 - [ ] Upload Synthea CSVs to the volume (`databricks fs cp`)
 
 ## Phase 1: Medallion + governance (success criterion 1)
@@ -76,6 +76,6 @@ Care-gap logic uses `current_date()` on shifted silver data. Tools still accept 
 so tests and the spot check are reproducible.
 
 ## Open questions
-1. Catalog name (existing, or create a new one)?
+1. ~~Catalog name~~ Decided: create new catalog `caregenie`.
 2. Are the Synthea CSVs in this session's folder? None were found, so they need to be uploaded.
 3. Does the workspace have AI Search (Vector Search) and Lakebase enabled?
