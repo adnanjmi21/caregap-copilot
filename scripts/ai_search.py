@@ -8,7 +8,7 @@
 import json, subprocess, sys, time
 
 IDX = {"guidelines": "caregenie.caregenie.guidelines_index",
-       "chunks": "caregenie.caregenie.encounter_chunks_index"}
+       "chunks": "caregenie.caregenie.encounter_chunks_v2_index"}
 COLS = {"guidelines": ["guideline_id", "title", "content"],
         "chunks": ["chunk_id", "clinic", "encounter_date", "chunk_text"]}
 
@@ -21,9 +21,16 @@ def api(method, path, body=None):
     return json.loads(r.stdout) if r.stdout.strip() else {}
 
 
+def embed(text):
+    """Self-managed-embedding indexes cannot embed query text, so embed it with the same model used for the data."""
+    r = api("post", "/serving-endpoints/databricks-gte-large-en/invocations", {"input": [text]})
+    return r["data"][0]["embedding"]
+
+
 def query(which, text, n=3):
-    r = api("post", f"/api/2.0/vector-search/indexes/{IDX[which]}/query",
-            {"query_text": text, "columns": COLS[which], "num_results": n})
+    body = {"columns": COLS[which], "num_results": n}
+    body["query_vector" if which == "chunks" else "query_text"] = embed(text) if which == "chunks" else text
+    r = api("post", f"/api/2.0/vector-search/indexes/{IDX[which]}/query", body)
     return r.get("result", {}).get("data_array", [])
 
 
