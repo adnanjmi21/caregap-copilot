@@ -66,12 +66,17 @@ Note: SQL UDFs are read-only, so the write tool `queue_outreach` is a SQL stored
 - Tool-confusion demo: two overlapping tool descriptions give a wrong pick in the trace. Rewrite the descriptions
   and show the fix.
 
-## Phase 4: Agent + memory - agent core and short-term memory built (`agent/caregenie_agent.py`, `scripts/try_agent.py`); Lakebase long-term memory pending approval
+## Phase 4: Agent + memory - agent core and short-term memory built (`agent/caregenie_agent.py`, `scripts/try_agent.py`); Lakebase long-term memory built
 - Agent notebook with tools = UC functions + the two AI Search indexes (as retriever tools).
 - Short-term memory: thread checkpointing, so follow-up questions resolve against earlier answers (Q6).
 - Long-term memory: Lakebase table of per-user preferences (channel, clinic), read by structured query (Q7).
 - Routing rule in the system prompt: exact or aggregate means UC function, guideline or similar cases means
   AI Search, user preferences means Lakebase.
+
+Lakebase (Autoscaling project `caregenie-memory`, 0.5-1 CU, suspends after 5 min idle; registered in UC as
+`caregenie_lakebase`): `user_preferences` table created and seeded by a one-off serverless job
+(`agent/lakebase_setup_job.py`) because the Postgres port is not reachable from the dev sandbox. A UC-registered Lakebase
+catalog is read-only (DDL refused), so the agent reads preferences with a structured SQL query through the warehouse.
 
 ## Phase 5: MLflow 3 tracing and evaluation (success criterion 5)
 - Autologging on, and one trace per example question (Q1 to Q7), checking the tool family used.

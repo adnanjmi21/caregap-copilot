@@ -141,6 +141,18 @@ class Tools:
         return self.prefs.get(self.w.current_user.me().user_name)
 
 
+class LakebaseCatalogPreferences:
+    """Long-term memory read path: Lakebase registered in Unity Catalog (caregenie_lakebase), read-only, via the SQL warehouse.
+    Writes go straight to Postgres (agent/lakebase_prefs.py), which needs network access to the Lakebase host."""
+    def __init__(self, tools):
+        self.t = tools
+
+    def get(self, user_name):
+        u = user_name.replace("'", "''")
+        rows = self.t.sql(f"SELECT preferred_channel, default_clinic FROM caregenie_lakebase.public.user_preferences WHERE user_name = '{u}'")
+        return rows[0] if rows else {"error": "No saved preferences for this user"}
+
+
 class ThreadStore:
     """Short-term memory: conversation turns checkpointed to a Delta table, keyed by thread_id."""
     TABLE = f"{CATALOG_SCHEMA}.agent_threads"
@@ -165,6 +177,8 @@ class CareGenieAgent:
         self.cfg = cfg or AgentConfig()
         self.w = w or WorkspaceClient()
         self.tools = Tools(self.w, self.cfg, prefs)
+        if prefs is None:
+            self.tools.prefs = LakebaseCatalogPreferences(self.tools)
         self.client = self.tools._openai
         self.threads = ThreadStore(self.tools)
         self.specs = tool_specs(self.cfg.descriptions)
