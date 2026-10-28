@@ -2,7 +2,7 @@
 """Run a .sql notebook file statement by statement on the serverless warehouse.
 
 Usage: python3 scripts/run_sql_file.py notebooks/01_bronze.sql [--show-last]
-Statements end with a line-final ';'. Comment-only chunks are skipped.
+Statements end with a line-final ';' (a CREATE PROCEDURE ends at a line that is exactly 'END;'). Comment-only chunks are skipped.
 """
 import json, os, subprocess, sys, time
 
@@ -35,7 +35,8 @@ def split(text):
         if not cur and (not line.strip() or line.strip().startswith("--")):
             continue
         cur.append(line)
-        if line.rstrip().endswith(";"):
+        in_proc = "PROCEDURE" in cur[0].upper()  # compound body: only a lone END; closes it
+        if (line.strip() == "END;") if in_proc else line.rstrip().endswith(";"):
             stmts.append("\n".join(cur).rstrip().rstrip(";"))
             cur = []
     if cur:

@@ -46,7 +46,8 @@ Still to do: CONTINUOUS comparison and the chunk-size comparison.
 - Experiment: TRIGGERED index, insert a new guideline, query (stale), sync, query (fresh). Compare with CONTINUOUS.
 - Chunk-size comparison for encounter narratives.
 
-## Phase 3: UC function tools (success criteria 3 and 4)
+## Phase 3: UC function tools (success criteria 3 and 4) - tools built and tested (`notebooks/04_uc_tools.sql`)
+Note: SQL UDFs are read-only, so the write tool `queue_outreach` is a SQL stored procedure (`CALL`). The tool-confusion demo is still to do.
 - Read: `overdue_hba1c_patients(clinic, months)`, `patient_summary(patient_id)`.
 - Write: `queue_outreach(patient_id, channel, reason)` inserts into `outreach_queue` with an audit trail
   (user, timestamp, reason).
