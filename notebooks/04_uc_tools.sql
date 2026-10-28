@@ -22,8 +22,8 @@ CLUSTER BY (patient_id);
 -- COMMAND ----------
 
 CREATE OR REPLACE FUNCTION caregenie.caregenie.overdue_hba1c_patients(
-  clinic_name STRING DEFAULT NULL COMMENT 'Exact clinic name to filter on, or NULL for all clinics',
-  months INT DEFAULT 12 COMMENT 'A patient is listed when their last HbA1c is more than this many whole months old, or they were never tested'
+  clinic_name STRING DEFAULT NULL COMMENT 'Exact clinic name to filter on. Omit this argument to include all clinics; never pass null',
+  months INT DEFAULT 12 COMMENT 'Always pass this when the user names a time window. A patient is listed when their last HbA1c is more than this many whole months old, or they were never tested'
 )
 RETURNS TABLE (patient_id STRING, clinic STRING, last_hba1c_date DATE, months_since_last_hba1c INT, last_hba1c_value DOUBLE)
 COMMENT 'EXACT LOOKUP. Lists living diabetic patients (not prediabetic) whose HbA1c is overdue. Use for questions like which patients are overdue, how many, or at which clinic. Do not use for guideline questions or for one patient''s history.'

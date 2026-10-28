@@ -84,7 +84,8 @@ Store checkpointing, managed Memory Store tools and human-in-the-loop approval (
 the agent pauses with an `interrupt`, nothing is written). Tools: two `VectorSearchRetrieverTool` declarations (`agent/tools/search.py`,
 works for managed and self-managed-embedding indexes) and one `@tool` function for the write procedure. Model: `system.ai.gpt-oss-120b`
 (the Claude gateway services are not enabled in this workspace).
-Blocked: `agentbricks tools add uc-function` loads through Databricks managed MCP, which is a Public Preview not enabled here
+Resolved by adding the `databricks-connect` token scope: UC functions are now tools via `UCFunctionToolkit` (`agent/tools/uc_functions.py`).
+The old hand-written agent (`agent/`, Lakebase prefs code, serving wrapper, deploy script) was removed. Earlier blocker: `agentbricks tools add uc-function` loads through Databricks managed MCP, which is a Public Preview not enabled here
 ("Databricks managed MCP servers are not enabled"), so the agent fails to start with those bindings. Options: enable the preview in
 workspace settings, give the token the `databricks-connect` scope (then `UCFunctionToolkit`), or add two small `@tool` wrappers.
 Not deployed yet (Databricks Apps); needs approval.

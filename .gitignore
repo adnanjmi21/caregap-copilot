@@ -4,3 +4,5 @@
 .databricks/
 __pycache__/
 .venv/
+mlflow.db
+mlruns/
