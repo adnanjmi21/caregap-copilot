@@ -16,6 +16,15 @@ Everything lives in one dedicated schema: `<catalog>.caregap` (name to be confir
 - `01_bronze`: Auto Loader (`read_files` / `cloudFiles`) from the volume into bronze Delta tables, one per CSV
   (patients, conditions, medications, observations, encounters, procedures).
 - `02_silver`: typed, deduped, joined on patient/encounter; HbA1c = LOINC 4548-4 from observations.
+  - **Date shift (so the data looks current):** the Synthea data ends 2020-04-28. Silver shifts every date and
+    timestamp forward by a fixed **2,374 days**, so the newest record lands on 2026-10-28. Whole-interval
+    arithmetic is preserved (12-month gaps, ages, medication durations), and `current_date()` logic then works.
+  - Applied to: `BIRTHDATE`, `DEATHDATE`, `START`, `STOP`, `DATE` in every silver table, using one shared
+    constant from a one-row table `silver_date_shift(shift_days, anchor_date)`, never computed from
+    `current_date()` at run time, so re-runs are idempotent and the data does not drift daily.
+  - Bronze stays raw and unshifted. Silver column comments state "synthetic dates, shifted +2374 days".
+  - Verification: `MAX(observation date)` in silver = 2026-10-28, and per-patient HbA1c gaps in days equal
+    bronze gaps exactly.
 - `03_gold`:
   - `gold_patient_panel`: one row per patient, with diabetes and hypertension flags.
   - `gold_hba1c_gap`: last HbA1c date and months since, with an `is_overdue` flag (threshold > 12 months).
@@ -61,6 +70,10 @@ PLAN.md
 
 ## Exam-topic study notes
 Each notebook ends with a "What this taught" cell mapping to the exam domain.
+
+## Date handling
+Care-gap logic uses `current_date()` on shifted silver data. Tools still accept an optional `as_of_date`
+so tests and the spot check are reproducible.
 
 ## Open questions
 1. Catalog name (existing, or create a new one)?
