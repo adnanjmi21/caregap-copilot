@@ -45,7 +45,15 @@ Managed-embedding sync of the chunks ran at ~100 rows/min (hours). Fix: precompu
 (`notebooks/03b_gold_embeddings.sql`, 25 s for 28,782 chunks) and index them as self-managed embeddings
 (`encounter_chunks_v2_index`, loaded in ~3 min). Trade-off: text queries are not accepted, the caller embeds the query.
 The slow `encounter_chunks_index` was deleted (user-approved).
-Still to do: CONTINUOUS comparison and the chunk-size comparison (cheap now).
+Findings:
+- CONTINUOUS pipeline type is **not supported in this workspace** (`Pipeline type CONTINUOUS is not supported`), so the
+  TRIGGERED-vs-CONTINUOUS comparison is documented from the TRIGGERED result only (stale until `sync`, ~2 min).
+- Chunk size (`notebooks/05_chunk_size_experiment.sql`, `scripts/ai_search.py experiment-chunk-size`): small = 28,782
+  encounter chunks (152 chars avg), large = 10,962 patient-year chunks (306 chars avg). Mean P@5 = 0.84 small vs 0.80
+  large over 5 queries: no meaningful difference because encounter narratives are already short. Large chunks cost
+  fewer vectors (62% fewer) but each returned hit carries more unrelated encounters.
+- Vocabulary gap: "heart attack" scored P@5 0.20 (small) / 0.00 (large) while "myocardial infarction" finds the
+  matching chunks. Lay terms miss SNOMED wording; fixes are query rewriting by the agent or hybrid search.
 - Delta Sync indexes on `gold_guidelines` and `gold_encounter_chunks` (Change Data Feed on).
 - Experiment: TRIGGERED index, insert a new guideline, query (stale), sync, query (fresh). Compare with CONTINUOUS.
 - Chunk-size comparison for encounter narratives.
