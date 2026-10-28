@@ -78,6 +78,17 @@ Lakebase (Autoscaling project `caregenie-memory`, 0.5-1 CU, suspends after 5 min
 (`agent/lakebase_setup_job.py`) because the Postgres port is not reachable from the dev sandbox. A UC-registered Lakebase
 catalog is read-only (DDL refused), so the agent reads preferences with a structured SQL query through the warehouse.
 
+### Agent Bricks / AgentKit version (`caregenie-agent/`, scaffolded with `agentbricks init`)
+Replaces the hand-written classes in `agent/` (kept for comparison). `databricks_agentkit` supplies the LangGraph agent, managed Session
+Store checkpointing, managed Memory Store tools and human-in-the-loop approval (`REQUIRE_APPROVAL = {"queue_outreach": True}`, verified:
+the agent pauses with an `interrupt`, nothing is written). Tools: two `VectorSearchRetrieverTool` declarations (`agent/tools/search.py`,
+works for managed and self-managed-embedding indexes) and one `@tool` function for the write procedure. Model: `system.ai.gpt-oss-120b`
+(the Claude gateway services are not enabled in this workspace).
+Blocked: `agentbricks tools add uc-function` loads through Databricks managed MCP, which is a Public Preview not enabled here
+("Databricks managed MCP servers are not enabled"), so the agent fails to start with those bindings. Options: enable the preview in
+workspace settings, give the token the `databricks-connect` scope (then `UCFunctionToolkit`), or add two small `@tool` wrappers.
+Not deployed yet (Databricks Apps); needs approval.
+
 ## Phase 5: MLflow 3 tracing and evaluation (success criterion 5)
 - Autologging on, and one trace per example question (Q1 to Q7), checking the tool family used.
 - Evaluation dataset with the 7 questions plus expected tool family.
