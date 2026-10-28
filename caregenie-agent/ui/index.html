@@ -170,13 +170,16 @@
               <div class="empty-mark" aria-hidden="true">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="10" ry="4.3"/><ellipse cx="12" cy="12" rx="10" ry="4.3" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.3" transform="rotate(120 12 12)"/></svg>
               </div>
-              <h2>Start a conversation</h2>
-              <p>Chat with your project agent from agent/agent.py. Every mode runs its instructions and tools; the model picker changes only the model for this page.</p>
-              <p class="empty-prompts-label">What would you like to test?</p>
+              <h2>Ask CareGenie</h2>
+              <p>Care-gap assistant over synthetic Synthea patients. All patients are synthetic and the guidelines are fictional, not medical advice.</p>
+              <p class="empty-prompts-label">Try a question</p>
               <div class="prompt-grid">
-                <button type="button" data-prompt="Use the get_current_time tool and explain what you did.">Use a tool</button>
-                <button type="button" data-prompt="Remember in this conversation that my launch color is indigo. Do not use long-term memory.">Test session</button>
-                <button type="button" data-prompt="Send a message to demo@databricks.com saying the Agent Bricks demo is ready. Use the send_message tool.">Trigger approval</button>
+                <button type="button" data-prompt="How many diabetic patients have an HbA1c older than 9 months?">Overdue count</button>
+                <button type="button" data-prompt="List the patients whose last HbA1c is older than 9 months, then give me the summary for the first one.">Patient summary</button>
+                <button type="button" data-prompt="What do the guidelines say about how often HbA1c should be checked?">Guidelines</button>
+                <button type="button" data-prompt="Find visits where the patient was diagnosed with diabetic retinopathy.">Similar visits</button>
+                <button type="button" data-prompt="Remember that my preferred contact channel is phone.">Save a preference</button>
+                <button type="button" data-prompt="Queue outreach by my preferred channel for the first patient whose last HbA1c is older than 9 months. Reason: HbA1c overdue.">Trigger approval</button>
               </div>
             </div>
           </div>

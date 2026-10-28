@@ -189,3 +189,18 @@ is unchanged; OBO does not add another saver.
 Existing generated projects must update their copies of `agent/agent.py` and `runtime/adapter.py`
 to remove the OBO pause/resume rejection guards. Upgrading the installed package alone does not
 rewrite these files. Keep the runtime's automatic-recovery guard.
+
+## Sample questions (CareGenie)
+
+| Ask | Tool family it should use |
+| --- | --- |
+| How many diabetic patients have an HbA1c older than 9 months? | UC function `overdue_hba1c_patients` |
+| List the patients whose last HbA1c is older than 9 months, then give me the summary for the first one. | UC functions (list, then `patient_summary`) |
+| Is that patient overdue at a 6 month threshold? (as a follow-up) | Session memory plus UC function |
+| What do the guidelines say about how often HbA1c should be checked? | AI Search `search_guidelines` (fictional guidelines) |
+| Find visits where the patient was diagnosed with diabetic retinopathy. | AI Search `search_encounters` |
+| Remember that my preferred contact channel is phone. / What is my preferred contact channel? | Long-term memory tools |
+| Queue outreach by my preferred channel for the first patient whose last HbA1c is older than 9 months. | `queue_outreach`, paused for human approval |
+
+All patients are synthetic (Synthea) and the guidelines are fictional, not medical advice. Tip: use clinical terms for visit
+searches ("myocardial infarction", not "heart attack").

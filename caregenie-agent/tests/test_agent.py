@@ -21,19 +21,33 @@ from databricks_agentkit.langgraph.session_store import (
 )
 
 
+def _has_workspace_auth() -> bool:
+    return bool(
+        os.getenv("DATABRICKS_CONFIG_PROFILE")
+        or (os.getenv("DATABRICKS_HOST") and os.getenv("DATABRICKS_TOKEN"))
+    )
+
+
+@pytest.mark.skipif(not _has_workspace_auth(), reason="UC function and AI Search tools connect to the workspace on import")
 def test_tools_autoregister():
     tools = all_tools()
-    assert tools, "expected the sample tool to auto-register"
     assert all(isinstance(t, BaseTool) for t in tools)
-    assert {"get_current_time", "send_message"} <= {t.name for t in tools}
+    assert {
+        "queue_outreach",
+        "search_guidelines",
+        "search_encounters",
+        "caregenie__caregenie__overdue_hba1c_patients",
+        "caregenie__caregenie__patient_summary",
+    } <= {t.name for t in tools}
 
 
-def test_gated_tool_is_in_require_approval():
-    # The gated demo tool must exist and be listed for approval, or the HITL demo does nothing.
+def test_write_tool_is_gated_by_approval():
+    # queue_outreach writes to outreach_queue, so it must be listed for human approval.
     from agent.agent import REQUIRE_APPROVAL
+    from agent.tools.queue_outreach import queue_outreach
 
-    assert REQUIRE_APPROVAL.get("send_message")
-    assert "send_message" in {t.name for t in all_tools()}
+    assert isinstance(queue_outreach, BaseTool)
+    assert REQUIRE_APPROVAL.get("queue_outreach")
 
 
 class _FakeInterrupt:
@@ -48,7 +62,7 @@ async def _aiter(events):
 
 @pytest.mark.asyncio
 async def test_serialize_events_relays_interrupt_as_native_event():
-    hitl = {"action_requests": [{"name": "send_message", "args": {"recipient": "x", "body": "y"}}]}
+    hitl = {"action_requests": [{"name": "queue_outreach", "args": {"patient_id": "x", "channel": "phone", "reason": "y"}}]}
     stream = _aiter([("updates", {"__interrupt__": (_FakeInterrupt(hitl, "int-1"),)})])
     events = [e async for e in _serialize_events(stream)]
     assert events == [{"type": "interrupt", "id": "int-1", "value": hitl}]
@@ -199,13 +213,6 @@ async def test_adapter_calls_same_run_agent_for_invoke_and_recovery(monkeypatch)
     create_graph.assert_awaited_once_with("runtime-session", None)
     assert "session_id" not in response
     assert "session_id" not in recovered
-
-
-def _has_workspace_auth() -> bool:
-    return bool(
-        os.getenv("DATABRICKS_CONFIG_PROFILE")
-        or (os.getenv("DATABRICKS_HOST") and os.getenv("DATABRICKS_TOKEN"))
-    )
 
 
 @pytest.mark.skipif(
