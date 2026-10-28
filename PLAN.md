@@ -8,8 +8,8 @@ Everything lives in one dedicated schema: `caregenie.caregenie` (new catalog `ca
 ## Phase 0: Setup (in progress)
 - [x] Databricks CLI v1.22.1 installed
 - [ ] Workspace host + auth (OAuth U2M preferred, PAT as fallback) into a `caregenie` CLI profile
-- [ ] Confirm catalog, SQL warehouse, and Lakebase/AI Search availability in the workspace
-- [ ] Create catalog `caregenie`, schema `caregenie` with a Volume `raw` (for the Synthea CSVs)
+- [x] Confirm catalog, SQL warehouse, and Lakebase/AI Search availability in the workspace
+- [x] Create catalog `caregenie`, schema `caregenie` with a Volume `raw` (for the Synthea CSVs)
 - [ ] Upload Synthea CSVs to the volume (`databricks fs cp`)
 
 ## Phase 1: Medallion + governance (success criterion 1)
