@@ -1,15 +1,27 @@
-command: ["uv", "run", "start-server"]
-# databricks apps listen by default on port 8000
-#
-# Agent Bricks injects the deployed Runtime Store endpoint. The LangGraph checkpointer remains
-# in-process unless a managed Session Store is bound. Tracing is bound with `agentbricks tracing bind
-# --experiment-name <path>` (agentbricks deploy then wires the env below; `agentbricks dev` traces to a local
-# MLflow server). To set a deployment's tracing env by hand instead:
-#
-# env:
-#   # Tracing (set a destination + an experiment). Destination: MLFLOW_TRACKING_URI or
-#   # MLFLOW_TRACING_DESTINATION. Experiment: MLFLOW_EXPERIMENT_ID or MLFLOW_EXPERIMENT_NAME.
-#   - name: MLFLOW_TRACKING_URI
-#     value: "databricks"
-#   - name: MLFLOW_EXPERIMENT_ID
-#     value: "<experiment-id>"
+command:
+- uv
+- run
+- start-server
+env:
+- name: MLFLOW_TRACKING_URI
+  value: databricks
+- name: MLFLOW_EXPERIMENT_ID
+  value: '2316252870958311'
+- name: AGENT_MEMORY_STORE
+  value: caregenie-lcajkl-memory
+- name: AGENT_SESSION_STORE
+  value: caregenie-lcajkl-sessions
+- name: PIP_INDEX_URL
+  value: https://pypi.org/simple/
+- name: UV_INDEX_URL
+  value: https://pypi.org/simple/
+- name: UV_DEFAULT_INDEX
+  value: https://pypi.org/simple/
+- name: DATABRICKS_AGENTBRICKS_RUNTIME_STORE_LAKEBASE_BRANCH
+  value: projects/databricks-internal-custom-agents/branches/production
+- name: DATABRICKS_AGENTBRICKS_RUNTIME_STORE_DATABASE
+  value: agent-bricks-caregenie
+- name: DATABRICKS_AGENTBRICKS_RUNTIME_STORE_USERNAME
+  value: cd06e396-f29b-4317-ae8a-494cf0496b97
+- name: DATABRICKS_AGENTBRICKS_RUNTIME_STORE_SCHEMA
+  value: databricks_agentkit_runtime

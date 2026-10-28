@@ -88,7 +88,10 @@ Resolved by adding the `databricks-connect` token scope: UC functions are now to
 The old hand-written agent (`agent/`, Lakebase prefs code, serving wrapper, deploy script) was removed. Earlier blocker: `agentbricks tools add uc-function` loads through Databricks managed MCP, which is a Public Preview not enabled here
 ("Databricks managed MCP servers are not enabled"), so the agent fails to start with those bindings. Options: enable the preview in
 workspace settings, give the token the `databricks-connect` scope (then `UCFunctionToolkit`), or add two small `@tool` wrappers.
-Not deployed yet (Databricks Apps); needs approval.
+Deployed to Databricks Apps as `agent-bricks-caregenie` (https://agent-bricks-caregenie-7474645941028995.aws.databricksapps.com, state RUNNING).
+App service principal `cd06e396-f29b-4317-ae8a-494cf0496b97` was granted: USE CATALOG/SCHEMA, EXECUTE on the 2 functions and the
+`queue_outreach` procedure, SELECT on `gold_hba1c_gap`, `gold_patient_panel` and both search indexes, SELECT+MODIFY on `outreach_queue`,
+and CAN_USE on the SQL warehouse. Not verified live: Apps routes and logs need OAuth, and the dev sandbox only has a PAT.
 
 ## Phase 5: MLflow 3 tracing and evaluation (success criterion 5)
 - Autologging on, and one trace per example question (Q1 to Q7), checking the tool family used.
