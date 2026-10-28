@@ -66,7 +66,7 @@ Note: SQL UDFs are read-only, so the write tool `queue_outreach` is a SQL stored
 - Tool-confusion demo: two overlapping tool descriptions give a wrong pick in the trace. Rewrite the descriptions
   and show the fix.
 
-## Phase 4: Agent + memory
+## Phase 4: Agent + memory - agent core and short-term memory built (`agent/caregenie_agent.py`, `scripts/try_agent.py`); Lakebase long-term memory pending approval
 - Agent notebook with tools = UC functions + the two AI Search indexes (as retriever tools).
 - Short-term memory: thread checkpointing, so follow-up questions resolve against earlier answers (Q6).
 - Long-term memory: Lakebase table of per-user preferences (channel, clinic), read by structured query (Q7).
