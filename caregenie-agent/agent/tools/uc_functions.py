@@ -3,9 +3,12 @@
 Execution uses Databricks Connect (serverless), so the identity running the agent needs EXECUTE on the functions and
 SELECT on the gold tables they read. Tool names are the three-part function names joined with double underscores.
 """
+from databricks_agentkit import workspace_client
 from databricks_langchain import UCFunctionToolkit
+from unitycatalog.ai.core.databricks import DatabricksFunctionClient
 
-_toolkit = UCFunctionToolkit(function_names=[
+# Explicit client = the app identity; Databricks Connect (serverless) is configured from its credentials.
+_toolkit = UCFunctionToolkit(client=DatabricksFunctionClient(client=workspace_client()), function_names=[
     "caregenie.caregenie.overdue_hba1c_patients",
     "caregenie.caregenie.patient_summary",
 ])
