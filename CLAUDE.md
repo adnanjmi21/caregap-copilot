@@ -30,7 +30,6 @@ generic data-engineering explanations.
   concern. Run `agentbricks dev` to try it and `uv run pytest` from that folder to test.
 - After changing the agent, redeploy with `agentbricks deploy --no-wait` then `agentbricks deployments wait agent-bricks-caregenie`.
 - Stopping the local dev server: use `pkill -x databricks`. Never `pkill -f` or `pgrep -f` with a pattern that appears in your own command line, it kills the shell.
-
 - The `databricks` Claude Code plugin is enabled project-wide in `.claude/settings.json` (installed with `databricks aitools install --agents claude-code --scope project`). Its skills load in a new session; use them for Databricks CLI, Apps, Lakebase, Model Serving and jobs questions before guessing.
 
 ## Known constraints (do not rediscover)
