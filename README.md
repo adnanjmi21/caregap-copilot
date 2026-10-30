@@ -24,6 +24,8 @@ Everything lives in Unity Catalog under `caregenie.caregenie`.
 ## Prerequisites
 
 - Databricks CLI v1.22.1+ and Python 3.11+. `sh scripts/setup.sh` installs the CLI and `databricks-agentbricks` into `.venv`.
+- Optional, for Claude Code users: the Databricks plugin (skills for the CLI, Apps, Lakebase, Model Serving, jobs and more) is enabled for
+  this repo in `.claude/settings.json`. Reinstall with `databricks aitools install --agents claude-code --scope project`.
 - `DATABRICKS_HOST` and `DATABRICKS_TOKEN` in the environment. Never put the token in a file or in chat.
 - A personal access token with these scopes (this is what the project needed): `files`, `model-serving`,
   `databricks-connect`, `apps`, `scim`, plus the SQL, Unity Catalog and vector-search defaults.
